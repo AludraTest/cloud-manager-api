@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<conqat-architecture xmlns="http://conqat.cs.tum.edu/ns/architecture" policy="deny">
+   <component dim="120,40" name="slf4j" pos="490,710">
+      <code-mapping regex="org\.slf4j\..*" type="include"/>
+   </component>
+   <component dim="120,40" name="json" pos="310,710">
+      <code-mapping regex="org\.json\..*" type="include"/>
+   </component>
+   <component dim="120,40" name="sys_java" pos="110,710">
+      <code-mapping regex="java\..*|javax\..*" type="include"/>
+   </component>
+   <component dim="731,641" name="cloud-manager-api" pos="30,20">
+      <component dim="120,40" name="util" pos="500,460">
+         <code-mapping regex="org\.aludratest\.cloud\.util\..*" type="include"/>
+      </component>
+      <component dim="120,40" name="request" pos="580,40">
+         <code-mapping regex="org\.aludratest\.cloud\.request\..*" type="include"/>
+      </component>
+      <component dim="120,40" name="restApi" pos="440,590">
+         <code-mapping regex="org\.aludratest\.cloud\.rest\..*" type="include"/>
+      </component>
+      <component dim="120,40" name="plugin" pos="180,40">
+         <code-mapping regex="org\.aludratest\.cloud\.plugin\..*" type="include"/>
+      </component>
+      <component dim="120,40" name="resourceGroup" pos="20,230">
+         <code-mapping regex="org\.aludratest\.cloud\.resourcegroup\..*" type="include"/>
+         <code-mapping regex="org\.aludratest\.cloud\.resourcegroup\.Abstract.*" type="exclude"/>
+      </component>
+      <component dim="137,154" name="config" pos="20,40">
+         <component dim="120,40" name="config/admin" pos="7,93">
+            <code-mapping regex="org\.aludratest\.cloud\.config\.admin\..*" type="include"/>
+         </component>
+         <component dim="120,40" name="config/api" pos="6,37">
+            <code-mapping regex="org\.aludratest\.cloud\.config\.[^\.]*" type="include"/>
+         </component>
+         <code-mapping regex="org\.aludratest\.cloud\.config\..*" type="include"/>
+      </component>
+      <component dim="291,151" name="resource" pos="10,300">
+         <component dim="120,40" name="resource/writer" pos="159,93">
+            <code-mapping regex="org\.aludratest\.cloud\.resource\.writer\..*" type="include"/>
+         </component>
+         <component dim="120,40" name="resource/user" pos="160,40">
+            <code-mapping regex="org\.aludratest\.cloud\.resource\.user\..*" type="include"/>
+         </component>
+         <component dim="120,40" name="resource/api" pos="17,40">
+            <code-mapping regex="org\.aludratest\.cloud\.resource\.[^\.]*" type="include"/>
+         </component>
+         <code-mapping regex="org\.aludratest\.cloud\.resource\..*" type="include"/>
+      </component>
+      <component dim="171,151" name="user" pos="50,470">
+         <component dim="120,40" name="api" pos="34,42">
+            <code-mapping regex="org\.aludratest\.cloud\.user\.[^\.]*" type="include"/>
+         </component>
+         <code-mapping regex="org\.aludratest\.cloud\.user\..*" type="include"/>
+         <component dim="120,40" name="userAdmin" pos="20,100">
+            <code-mapping regex="org\.aludratest\.cloud\.user\.admin\..*" type="include"/>
+         </component>
+      </component>
+      <component dim="228,63" name="abstractBaseImplementations" pos="400,230">
+         <code-mapping regex="org\.aludratest\.cloud\.module\.Abstract.*" type="include"/>
+         <code-mapping regex="org\.aludratest\.cloud\.resourcegroup\.Abstract.*" type="include"/>
+      </component>
+      <component dim="120,40" name="app" pos="230,120">
+         <code-mapping regex="org\.aludratest\.cloud\.app\..*" type="include"/>
+      </component>
+      <component dim="120,40" name="module" pos="310,40">
+         <code-mapping regex="org\.aludratest\.cloud\.module\..*" type="include"/>
+         <code-mapping regex="org\.aludratest\.cloud\.module\.Abstract.*" type="exclude"/>
+      </component>
+      <component dim="131,40" name="manager" pos="440,40">
+         <code-mapping regex="org\.aludratest\.cloud\.manager\..*" type="include"/>
+      </component>
+   </component>
+   <allow source="cloud-manager-api" target="sys_java"/>
+   <allow source="abstractBaseImplementations" target="app"/>
+   <allow source="abstractBaseImplementations" target="module"/>
+   <allow source="abstractBaseImplementations" target="manager"/>
+   <allow source="app" target="module"/>
+   <allow source="abstractBaseImplementations" target="user"/>
+   <allow source="resource/user" target="user"/>
+   <allow source="abstractBaseImplementations" target="resource"/>
+   <allow source="app" target="resource"/>
+   <allow source="abstractBaseImplementations" target="config"/>
+   <allow source="config/admin" target="config/api"/>
+   <allow source="config/admin" target="app"/>
+   <allow source="app" target="config/api"/>
+   <allow source="resource/user" target="resource/api"/>
+   <allow source="resource/writer" target="resource/api"/>
+   <allow source="resourceGroup" target="resource"/>
+   <allow source="resourceGroup" target="user"/>
+   <allow source="resourceGroup" target="config"/>
+   <allow source="abstractBaseImplementations" target="resourceGroup"/>
+   <allow source="app" target="plugin"/>
+   <allow source="abstractBaseImplementations" target="request"/>
+   <allow source="abstractBaseImplementations" target="util"/>
+   <allow source="cloud-manager-api" target="slf4j"/>
+   <allow source="restApi" target="json"/>
+   <allow source="resource/writer" target="json"/>
+   <allow source="abstractBaseImplementations" target="json"/>
+</conqat-architecture>
