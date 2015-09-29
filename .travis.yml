@@ -2,4 +2,4 @@ language: java
 
 sudo: false
 
-script: mvn clean test -P run-conqat
+script: mvn clean test site -P run-conqat
