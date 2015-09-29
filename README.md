@@ -13,7 +13,7 @@ cloud-manager-selenium module for an example for a Resource Module. Note the src
 which is the "hook" to register the module within ACM.
 
 
-## Generating Architecture Report
+## Generate Architecture Report
 
 A ConQAT compatible architecture is included in this project. To generate the HTML report, execute
 
