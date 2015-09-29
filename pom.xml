@@ -59,46 +59,6 @@
 		</dependency>
 	</dependencies>
 	
-	<!-- download an run ConQAT analysis when Profile is active -->
-	<profiles>
-		<profile>
-			<id>run-conqat</id>
-			<build>
-				<plugins>
-					<!-- download ConQAT -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<id>download-and-run-conqat</id>
-								<phase>site</phase>
-								<goals><goal>run</goal></goals>
-							</execution>
-						</executions>
-						<configuration>
-							<target>
-								<mkdir dir="conqat/engine" />
-								<get src="https://www.cqse.eu/download/conqat/conqat-binary-2015.2.zip" dest="conqat/engine/conqat.zip" skipexisting="true" />
-								<unzip src="conqat/engine/conqat.zip" dest="conqat/engine" overwrite="false" />
-								<!-- run conqat -->
-								<exec executable="${basedir}/conqat/engine/conqat-2015.2/bin/conqat.sh" osfamily="unix">
-									<arg value="-f" />
-									<arg value="${basedir}/conqat/cloud-manager-api.architecture.cqr" />
-								</exec>
-								<exec executable="${basedir}/conqat/engine/conqat-2015.2/bin/conqat.bat" osfamily="windows">
-									<arg value="-f" />
-									<arg value="${basedir}/conqat/cloud-manager-api.architecture.cqr" />
-								</exec>
-							</target>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 	<scm>
 		<connection>scm:git:https://git@github.com:AludraTest/cloud-manager-api.git</connection>
 		<developerConnection>scm:git:https://git@github.com/AludraTest/cloud-manager-api.git</developerConnection>
