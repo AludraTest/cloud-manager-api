@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aludratest</groupId>
 		<artifactId>cloud-manager-parent</artifactId>
-		<version>1-SNAPSHOT</version>
+		<version>1</version>
 	</parent>
 
 	<dependencies>
