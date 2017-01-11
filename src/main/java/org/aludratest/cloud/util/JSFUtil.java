@@ -111,7 +111,7 @@ public class JSFUtil {
 		}
 		if (url == null) {
 			// now try ClassLoader
-			resourceFileName = "/META-INF/resources" + resourceFileName;
+			resourceFileName = "META-INF/resources" + resourceFileName;
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			if (cl == null) {
 				cl = JSFUtil.class.getClassLoader();
