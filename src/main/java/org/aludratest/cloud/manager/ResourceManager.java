@@ -15,7 +15,7 @@
  */
 package org.aludratest.cloud.manager;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.aludratest.cloud.request.ResourceRequest;
 import org.aludratest.cloud.resourcegroup.ResourceGroupManager;
@@ -26,9 +26,12 @@ import org.aludratest.cloud.resourcegroup.ResourceGroupManager;
  * attaches listeners to the Resource Group Manager, the resource groups, and the resources, so it has a lifecycle.
  * {@link #start(ResourceGroupManager)} is called by the application when the Resource Manager shall start up the internal Thread
  * and attach to the resources, and {@link #shutdown()} is called when the Resource Manager shall stop the internal Thread and
- * detach from the resources.
+ * detach from the resources. <br>
+ * Note that the Resource Manager implementation is also responsible for firing resource request related application events.
  * 
  * @author falbrech
+ * 
+ * @see org.aludratest.cloud.event.ResourceRequestEvent
  * 
  */
 public interface ResourceManager {
@@ -48,12 +51,19 @@ public interface ResourceManager {
 
 	/**
 	 * Handles an incoming resource request. This method must return immediately, but trigger an asynchronous check for available
-	 * resources for the request. When no resources are available, the request should be queued.
+	 * resources for the request. When no resources are available, the request should be queued. The future inside the returned
+	 * managed resource request object can be used to wait for a resource to become available, or to check if it is already
+	 * available.
 	 * 
 	 * @param request
 	 *            Resource request to handle.
+	 * @return The managed resource request, including a Future for accessing the assigned resource (or waiting for it).
+	 * 
+	 * @throws ResourceManagerException
+	 *             If it is already clear that this request cannot be handled at all, e.g. due to no matching resources existing
+	 *             in the system, or insufficient privileges of the requesting user.
 	 */
-	public void handleResourceRequest(ResourceRequest request);
+	public ManagedResourceRequest handleResourceRequest(ResourceRequest request) throws ResourceManagerException;
 
 	/**
 	 * Shuts the resource manager down. Attached listeners must be detached from other objects, e.g. resources and resource
@@ -62,35 +72,11 @@ public interface ResourceManager {
 	public void shutdown();
 
 	/**
-	 * Returns the current total size of the internal queue of requests of this resource manager.
+	 * Returns all currently managed requests, including waiting, running, finished, and orphaned ones (the latter two only until
+	 * they are removed automatically after some time).
 	 * 
-	 * @return The current total size of the internal queue of requests of this resource manager.
+	 * @return A (possibly empty) iterator for all currently managed requests, never <code>null</code>.
 	 */
-	public int getTotalQueueSize();
-
-	/**
-	 * Attaches a listener to this Resource Manager. The listener will be informed when request related changes occur, e.g. a
-	 * request has been enqueued, or a resource is available for the request.
-	 * 
-	 * @param listener
-	 *            Listener to attach to this Resource Manager. If an equal listener is already attached, this method does nothing.
-	 */
-	public void addResourceManagerListener(ResourceManagerListener listener);
-
-	/**
-	 * Detaches a listener from this Resource Manager.
-	 * 
-	 * @param listener
-	 *            Listener to detach from this Resource Manager.
-	 */
-	public void removeResourceManagerListener(ResourceManagerListener listener);
-
-	/**
-	 * Returns a list of the resource queries which are currently in use, i.e. a resource has been assigned and the client is
-	 * currently using the resource.
-	 * 
-	 * @return A (possibly empty) list of running resource queries, never <code>null</code>.
-	 */
-	public List<? extends ManagedResourceQuery> getAllRunningQueries();
+	public Iterator<? extends ManagedResourceRequest> getManagedRequests();
 
 }

@@ -15,13 +15,24 @@
  */
 package org.aludratest.cloud.resource.writer;
 
+import org.aludratest.cloud.resource.Resource;
 
 /**
- * Marker interface for classes being able to somehow "serialize" the information about a resource.
+ * Base interface for classes being able to somehow "serialize" the information about a resource.
  * 
  * @author falbrech
  * 
  */
 public interface ResourceWriter {
+
+	/**
+	 * Indicates if this writer can serialize the given resource. Usually, this checks the type of the resource to be one of the
+	 * supported types for this writer.
+	 * 
+	 * @param resource
+	 *            Resource to check.
+	 * @return <code>true</code> if this writer is able to serialize the given resource, <code>false</code> otherwise.
+	 */
+	public boolean canWrite(Resource resource);
 
 }

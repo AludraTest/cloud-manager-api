@@ -22,32 +22,35 @@ import org.aludratest.cloud.user.UserDatabase;
 /**
  * A User Database Registry holds the list of all registered User Databases (e.g. file based, LDAP) available for selection as
  * main source for user authentication and user lists.
- * 
+ *
  * @author falbrech
- * 
+ *
  */
 public interface UserDatabaseRegistry {
 
 	/**
-	 * Plexus role of this component.
-	 */
-	public static final String ROLE = UserDatabaseRegistry.class.getName();
-
-	/**
 	 * The list of all registered User Databases available for selection as main source for authentication and user lists.
-	 * 
+	 *
 	 * @return The list of all registered User Databases available for selection as main source for authentication and user lists.
 	 */
-	public List<UserDatabase> getAllUserDatabases();
+	public List<? extends UserDatabase> getAllUserDatabases();
 
 	/**
 	 * Returns the user database with the given source name.
-	 * 
+	 *
 	 * @param sourceName
 	 *            Source name to return matching user database for.
-	 * 
+	 *
 	 * @return The user database with the given source name, or <code>null</code> if no user database was found.
 	 */
 	public UserDatabase getUserDatabase(String sourceName);
+
+	/**
+	 * Returns the currently active user database which is used to perform authentication checks for resource requests. This may
+	 * change at any time, so the result should not be stored for a longer time.
+	 *
+	 * @return The currently active user database.
+	 */
+	public UserDatabase getSelectedUserDatabase();
 
 }

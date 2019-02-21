@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.event;
+
+import org.aludratest.cloud.request.ResourceRequest;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * Abstract base implementation for the Resource Module interface.
+ * Base class for resource request related events. Listeners can be implemented using the Spring annotation
+ * <code>@EventListener</code>.
  * 
  * @author falbrech
  *
  */
-public abstract class AbstractResourceModule implements ResourceModule {
+public abstract class ResourceRequestEvent extends ApplicationEvent {
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+	private static final long serialVersionUID = 8367429787469453832L;
+
+	public ResourceRequestEvent(ResourceRequest request) {
+		super(request);
+	}
+
+	public ResourceRequest getRequest() {
+		return (ResourceRequest) getSource();
 	}
 
 }

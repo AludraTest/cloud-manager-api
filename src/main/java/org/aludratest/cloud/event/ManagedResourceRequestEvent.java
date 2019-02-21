@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.event;
 
-/**
- * Abstract base implementation for the Resource Module interface.
- * 
- * @author falbrech
- *
- */
-public abstract class AbstractResourceModule implements ResourceModule {
+import org.aludratest.cloud.manager.ManagedResourceRequest;
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+public class ManagedResourceRequestEvent extends ResourceRequestEvent {
+
+	private static final long serialVersionUID = 7871123041571988697L;
+
+	private ManagedResourceRequest managedRequest;
+
+	public ManagedResourceRequestEvent(ManagedResourceRequest managedRequest) {
+		super(managedRequest.getRequest());
+		this.managedRequest = managedRequest;
+	}
+
+	public ManagedResourceRequest getManagedRequest() {
+		return managedRequest;
 	}
 
 }

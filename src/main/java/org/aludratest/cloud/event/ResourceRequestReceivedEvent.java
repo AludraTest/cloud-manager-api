@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.event;
+
+import org.aludratest.cloud.manager.ManagedResourceRequest;
 
 /**
- * Abstract base implementation for the Resource Module interface.
+ * Resource request event signaling that a resource request has been received by the resource manager and is considered to be
+ * valid (e.g. sufficient privileges for requested resource). This event can be queried for the {@link ManagedResourceRequest}
+ * created by the manager.
  * 
  * @author falbrech
  *
  */
-public abstract class AbstractResourceModule implements ResourceModule {
+public class ResourceRequestReceivedEvent extends ManagedResourceRequestEvent {
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+	private static final long serialVersionUID = -4152108907886355099L;
+
+	public ResourceRequestReceivedEvent(ManagedResourceRequest managedRequest) {
+		super(managedRequest);
 	}
 
 }

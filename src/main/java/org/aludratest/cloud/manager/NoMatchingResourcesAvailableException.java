@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.manager;
 
-/**
- * Abstract base implementation for the Resource Module interface.
- * 
- * @author falbrech
- *
- */
-public abstract class AbstractResourceModule implements ResourceModule {
+public class NoMatchingResourcesAvailableException extends ResourceManagerException {
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+	private static final long serialVersionUID = 5471671393022906106L;
+
+	public NoMatchingResourcesAvailableException() {
+	}
+
+	public NoMatchingResourcesAvailableException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public NoMatchingResourcesAvailableException(String message) {
+		super(message);
+	}
+
+	public NoMatchingResourcesAvailableException(Throwable cause) {
+		super(cause);
 	}
 
 }

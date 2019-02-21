@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.app;
 
-/**
- * Abstract base implementation for the Resource Module interface.
- * 
- * @author falbrech
- *
- */
-public abstract class AbstractResourceModule implements ResourceModule {
+import org.aludratest.cloud.config.admin.ConfigurationAdmin;
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
-	}
+public interface CloudManagerAppConfigAdmin extends ConfigurationAdmin {
+
+	public void setHostName(String hostName);
+
+	public void setUseProxy(boolean useProxy);
+
+	public void setProxyHost(String proxyHost);
+
+	public void setProxyPort(int proxyPort);
+
+	public void setBypassProxyRegex(String bypassProxyRegex);
 
 }

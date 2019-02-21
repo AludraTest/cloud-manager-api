@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.event;
+
+import org.aludratest.cloud.manager.ManagedResourceRequest;
 
 /**
- * Abstract base implementation for the Resource Module interface.
+ * Event that signals that the given request has been canceled by external action (e.g. user requested a cancellation).
  * 
  * @author falbrech
  *
  */
-public abstract class AbstractResourceModule implements ResourceModule {
+public class ManagedResourceRequestCanceledEvent extends ManagedResourceRequestEvent {
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+	private static final long serialVersionUID = 5417042156328032597L;
+
+	public ManagedResourceRequestCanceledEvent(ManagedResourceRequest managedRequest) {
+		super(managedRequest);
 	}
 
 }

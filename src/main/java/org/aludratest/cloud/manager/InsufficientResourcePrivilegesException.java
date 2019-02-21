@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.aludratest.cloud.module;
+package org.aludratest.cloud.manager;
 
-/**
- * Abstract base implementation for the Resource Module interface.
- * 
- * @author falbrech
- *
- */
-public abstract class AbstractResourceModule implements ResourceModule {
+public class InsufficientResourcePrivilegesException extends ResourceManagerException {
 
-	@Override
-	public void handleApplicationShutdown() {
-		// subclasses can override to add handling
+	private static final long serialVersionUID = -6268754030829806879L;
+
+	public InsufficientResourcePrivilegesException() {
+		super();
+	}
+
+	public InsufficientResourcePrivilegesException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public InsufficientResourcePrivilegesException(String message) {
+		super(message);
+	}
+
+	public InsufficientResourcePrivilegesException(Throwable cause) {
+		super(cause);
 	}
 
 }

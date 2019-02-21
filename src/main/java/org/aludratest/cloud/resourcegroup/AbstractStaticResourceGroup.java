@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.aludratest.cloud.config.ConfigException;
+import org.aludratest.cloud.config.ConfigManager;
 import org.aludratest.cloud.config.Configurable;
 import org.aludratest.cloud.config.MainPreferences;
 import org.aludratest.cloud.config.Preferences;
@@ -30,6 +31,7 @@ import org.aludratest.cloud.resource.AbstractResourceCollection;
 import org.aludratest.cloud.resource.Resource;
 import org.aludratest.cloud.resource.ResourceCollection;
 import org.aludratest.cloud.resource.ResourceType;
+import org.aludratest.cloud.user.admin.UserDatabaseRegistry;
 
 /**
  * Abstract base class for resource groups having a static (but configurable) set of resources, and optionally a set of users
@@ -49,8 +51,9 @@ public abstract class AbstractStaticResourceGroup<R extends Resource> extends Ab
 
 	private StaticResourceCollection resourceCollection = new StaticResourceCollection();
 
-	protected AbstractStaticResourceGroup(ResourceType resourceType) {
-		super(resourceType);
+	protected AbstractStaticResourceGroup(ResourceType resourceType, ConfigManager configManager,
+			UserDatabaseRegistry userDatabaseRegistry) {
+		super(resourceType, configManager, userDatabaseRegistry);
 	}
 
 	@Override
@@ -160,7 +163,7 @@ public abstract class AbstractStaticResourceGroup<R extends Resource> extends Ab
 
 	protected abstract void validateResourceConfig(Preferences resourceConfig) throws ConfigException;
 
-	protected abstract R createResourceFromPreferences(Preferences resourceConfig) throws ConfigException;
+	protected abstract R createResourceFromPreferencesElement(Preferences resourceConfig) throws ConfigException;
 
 	protected abstract StaticResourceGroupAdmin<?> createStaticResourceGroupAdmin(MainPreferences preferences);
 
@@ -191,7 +194,7 @@ public abstract class AbstractStaticResourceGroup<R extends Resource> extends Ab
 		Collections.sort(ids);
 
 		for (Integer id : ids) {
-			result.add(createResourceFromPreferences(resPrefs.getChildNode(id.toString())));
+			result.add(createResourceFromPreferencesElement(resPrefs.getChildNode(id.toString())));
 		}
 
 		return result;

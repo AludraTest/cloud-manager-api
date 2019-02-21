@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.aludratest.cloud.app.CloudManagerApp;
 import org.aludratest.cloud.config.ConfigException;
+import org.aludratest.cloud.config.ConfigManager;
 import org.aludratest.cloud.config.Preferences;
 import org.aludratest.cloud.config.admin.AbstractConfigNodeBased;
 import org.aludratest.cloud.config.admin.AbstractConfigurationAdmin;
 import org.aludratest.cloud.config.admin.ConfigNodeBasedList;
 import org.aludratest.cloud.resource.Resource;
-import org.aludratest.cloud.resource.ResourceStateHolder;
 
 /**
  * Abstract base implementation for the {@link StaticResourceGroupAdmin} interface. It reads and writes information about static
@@ -50,8 +49,9 @@ public abstract class AbstractStaticResourceGroupConfigurationAdmin<R extends Re
 
 	private Class<T> elementClass;
 
-	protected AbstractStaticResourceGroupConfigurationAdmin(AbstractStaticResourceGroup<R> group, Class<T> elementClass) {
-		super(group.getPreferences());
+	protected AbstractStaticResourceGroupConfigurationAdmin(AbstractStaticResourceGroup<R> group, Class<T> elementClass,
+			ConfigManager configManager) {
+		super(group.getPreferences(), configManager);
 		this.group = group;
 		this.elementClass = elementClass;
 		try {
@@ -65,8 +65,7 @@ public abstract class AbstractStaticResourceGroupConfigurationAdmin<R extends Re
 
 	@Override
 	public T addResource() {
-		T resource = resourcesList.addElement();
-		return resource;
+		return resourcesList.addElement();
 	}
 
 	@Override
@@ -100,18 +99,6 @@ public abstract class AbstractStaticResourceGroupConfigurationAdmin<R extends Re
 	}
 
 	/**
-	 * Checks if the given existing resource is described by the given configuration object.
-	 * 
-	 * @param existingResource
-	 *            Existing resource.
-	 * @param configuredResource
-	 *            Configuration object.
-	 * 
-	 * @return <code>true</code> if the Configuration object describes the existing resource, <code>false</code> otherwise.
-	 */
-	protected abstract boolean equals(R existingResource, T configuredResource);
-
-	/**
 	 * Checks if two configuration objects are equal in terms of the resource they describe.
 	 * 
 	 * @param configuredResource1
@@ -123,7 +110,6 @@ public abstract class AbstractStaticResourceGroupConfigurationAdmin<R extends Re
 	 */
 	protected abstract boolean equals(T configuredResource1, T configuredResource2);
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void validateConfig(Preferences preferences) throws ConfigException {
 		ConfigNodeBasedList<T> list;
@@ -145,22 +131,6 @@ public abstract class AbstractStaticResourceGroupConfigurationAdmin<R extends Re
 				}
 			}
 			checkeds.add(t1);
-		}
-
-		// check other groups if resource is existing
-		ResourceGroupManager groupManager = CloudManagerApp.getInstance().getResourceGroupManager();
-
-		for (T entry : list) {
-			for (int groupId : groupManager.getAllResourceGroupIds()) {
-				ResourceGroup group = groupManager.getResourceGroup(groupId);
-				if (group != this.group && group.getResourceType() == this.group.getResourceType()) {
-					for (ResourceStateHolder rsh : group.getResourceCollection()) {
-						if (equals((R) rsh, entry)) {
-							throw new ConfigException("A configured resource already exists in another resource group");
-						}
-					}
-				}
-			}
 		}
 
 		group.validateConfiguration(preferences);

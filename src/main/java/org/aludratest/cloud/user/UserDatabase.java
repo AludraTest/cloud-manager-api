@@ -21,9 +21,9 @@ import org.databene.commons.Filter;
 
 /**
  * A User Database is responsible for authenticating users and providing the full list of available users.
- * 
+ *
  * @author falbrech
- * 
+ *
  */
 public interface UserDatabase {
 
@@ -39,7 +39,7 @@ public interface UserDatabase {
 	 * interface returning user objects with the same source identifier. <br>
 	 * When registering the user database implementation using Plexus, this identifier must also be used as the "hint" of the
 	 * component.
-	 * 
+	 *
 	 * @return The source identifier of this user database, never <code>null</code>, and never an empty string.
 	 */
 	public String getSource();
@@ -47,10 +47,10 @@ public interface UserDatabase {
 	/**
 	 * Returns an iterator which can be used to iterate over the list of users available in this User Database. An optional filter
 	 * can be provided to limit the result set.
-	 * 
+	 *
 	 * @param userFilter
 	 *            Filter to use to limit the returned result set, or <code>null</code> to not apply a filter.
-	 * 
+	 *
 	 * @return An iterator over the (optionally filtered) set of users available in this User Database, possibly not providing any
 	 *         elements, but never <code>null</code>.
 	 * @throws StoreException
@@ -60,15 +60,15 @@ public interface UserDatabase {
 
 	/**
 	 * Performs an authentication check for given user name / password combination.
-	 * 
+	 *
 	 * @param userName
 	 *            User name.
 	 * @param password
 	 *            Password for given user name.
-	 * 
+	 *
 	 * @return The user with the given user name, if the password was correct for the given user name, or <code>null</code> if
 	 *         password was incorrect or no such user exists in this User Database.
-	 * 
+	 *
 	 * @throws StoreException
 	 *             If any I/O exception occurs when querying the underlying persistence store.
 	 */
@@ -76,7 +76,7 @@ public interface UserDatabase {
 
 	/**
 	 * Finds the user with the given user name in this User Database.
-	 * 
+	 *
 	 * @param userName
 	 *            User name to search for.
 	 * @return The found user object, or <code>null</code> if no such user exists in this User Database.
@@ -87,7 +87,7 @@ public interface UserDatabase {
 
 	/**
 	 * Indicates if this user database is read only, e.g. when using an LDAP directory.
-	 * 
+	 *
 	 * @return <code>true</code> if calls for creating, deleting or modifying a user will result in an
 	 *         <code>UnsupportedOperationException</code>, <code>false</code> otherwise.
 	 */
@@ -95,7 +95,7 @@ public interface UserDatabase {
 
 	/**
 	 * Deletes the given user object from this User Database.
-	 * 
+	 *
 	 * @param user
 	 *            User to delete from this user database.
 	 * @throws StoreException
@@ -107,7 +107,7 @@ public interface UserDatabase {
 
 	/**
 	 * Creates a new user in this User Database.
-	 * 
+	 *
 	 * @param userName
 	 *            User name of the user to create.
 	 * @return The newly created user object, which can be used to change the user's password and the attributes.
@@ -122,7 +122,7 @@ public interface UserDatabase {
 
 	/**
 	 * Changes the password of the given user in this User Database.
-	 * 
+	 *
 	 * @param user
 	 *            User whose password shall be changed.
 	 * @param newPassword
@@ -136,7 +136,7 @@ public interface UserDatabase {
 
 	/**
 	 * Modifies an attribute of the given user.
-	 * 
+	 *
 	 * @param user
 	 *            User object.
 	 * @param attributeKey
@@ -156,12 +156,24 @@ public interface UserDatabase {
 	/**
 	 * Determines if a given attribute key is supported by this User Database (for modification purposes). Some implementations
 	 * may only support some attribute keys, depending on their underlying implementation.
-	 * 
+	 *
 	 * @param attributeKey
 	 *            Attribute key.
 	 * @return <code>true</code> if the attribute is supported within this User Database, <code>false</code> otherwise. Read-only
 	 *         User Databases always will return <code>false</code>.
 	 */
 	public boolean supportsUserAttribute(String attributeKey);
+
+	/**
+	 * Determines if this user database implementation can be used to change the
+	 * admin flag of a user, i.e. a call to {@link #setAdminFlag(User, boolean)}
+	 * will not throw an <code>UnsupportedOperationException</code>.
+	 *
+	 * @return <code>true</code> if {@link #setAdminFlag(User, boolean)} can be used
+	 *         for this implementation, or <code>false</code> otherwise.
+	 */
+	public boolean canChangeAdminFlag();
+
+	public void setAdminFlag(User user, boolean isAdmin) throws StoreException;
 
 }

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.aludratest.cloud.app.CloudManagerApp;
 import org.aludratest.cloud.config.ConfigException;
+import org.aludratest.cloud.config.ConfigManager;
 import org.aludratest.cloud.config.Configurable;
 import org.aludratest.cloud.config.MainPreferences;
 import org.aludratest.cloud.config.MutablePreferences;
@@ -63,13 +63,28 @@ public abstract class AbstractAuthorizingResourceGroup implements AuthorizingRes
 
 	private ResourceType resourceType;
 
-	protected AbstractAuthorizingResourceGroup(ResourceType resourceType) {
+	private ConfigManager configManager;
+
+	private UserDatabaseRegistry userDatabaseRegistry;
+
+	protected AbstractAuthorizingResourceGroup(ResourceType resourceType, ConfigManager configManager,
+			UserDatabaseRegistry userDatabaseRegistry) {
 		this.resourceType = resourceType;
+		this.configManager = configManager;
+		this.userDatabaseRegistry = userDatabaseRegistry;
 	}
 
 	@Override
 	public final ResourceType getResourceType() {
 		return resourceType;
+	}
+
+	protected final ConfigManager getConfigManager() {
+		return configManager;
+	}
+
+	protected final UserDatabaseRegistry getUserDatabaseRegistry() {
+		return userDatabaseRegistry;
 	}
 
 	@Override
@@ -177,7 +192,7 @@ public abstract class AbstractAuthorizingResourceGroup implements AuthorizingRes
 	private class AuthorizingAdmin extends AbstractConfigurationAdmin implements AuthorizingResourceGroupAdmin {
 
 		protected AuthorizingAdmin() {
-			super(preferences);
+			super(preferences, configManager);
 		}
 
 		@Override
@@ -272,8 +287,6 @@ public abstract class AbstractAuthorizingResourceGroup implements AuthorizingRes
 				return Collections.emptyList();
 			}
 
-			UserDatabaseRegistry registry = CloudManagerApp.getInstance().getUserDatabaseRegistry();
-
 			try {
 				JSONObject obj = new JSONObject(users);
 				JSONArray arr = obj.getJSONArray("users");
@@ -283,7 +296,7 @@ public abstract class AbstractAuthorizingResourceGroup implements AuthorizingRes
 				for (int i = 0; i < arr.length(); i++) {
 					JSONObject userObj = arr.getJSONObject(i);
 					if (userObj.has(JSON_USER_NAME) && userObj.has(JSON_USER_SOURCE)) {
-						UserDatabase db = registry.getUserDatabase(userObj.getString(JSON_USER_SOURCE));
+						UserDatabase db = userDatabaseRegistry.getUserDatabase(userObj.getString(JSON_USER_SOURCE));
 						if (db != null) {
 							User user = db.findUser(userObj.getString(JSON_USER_NAME));
 							if (user != null) {

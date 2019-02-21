@@ -15,8 +15,8 @@
  */
 package org.aludratest.cloud.config.admin;
 
-import org.aludratest.cloud.app.CloudManagerApp;
 import org.aludratest.cloud.config.ConfigException;
+import org.aludratest.cloud.config.ConfigManager;
 import org.aludratest.cloud.config.ConfigUtil;
 import org.aludratest.cloud.config.MainPreferences;
 import org.aludratest.cloud.config.MutablePreferences;
@@ -34,9 +34,11 @@ import org.aludratest.cloud.config.SimplePreferences;
  */
 public abstract class AbstractConfigurationAdmin implements ConfigurationAdmin {
 
-	private MainPreferences mainPreferences;
+	private final MainPreferences mainPreferences;
 
 	private SimplePreferences workingPreferences;
+
+	private final ConfigManager configManager;
 
 	private boolean committed;
 
@@ -45,9 +47,13 @@ public abstract class AbstractConfigurationAdmin implements ConfigurationAdmin {
 	 * 
 	 * @param mainPreferences
 	 *            Node of the MainPreferences tree to work on.
+	 * @param configManager
+	 *            The Config Manager to apply the changes to on commit.
+	 * 
 	 */
-	protected AbstractConfigurationAdmin(MainPreferences mainPreferences) {
+	protected AbstractConfigurationAdmin(MainPreferences mainPreferences, ConfigManager configManager) {
 		this.mainPreferences = mainPreferences;
+		this.configManager = configManager;
 		workingPreferences = new SimplePreferences(null);
 		ConfigUtil.copyPreferences(mainPreferences, workingPreferences);
 	}
@@ -59,7 +65,7 @@ public abstract class AbstractConfigurationAdmin implements ConfigurationAdmin {
 		validateConfig(workingPreferences);
 
 		// copy values back to original preferences
-		CloudManagerApp.getInstance().getConfigManager().applyConfig(workingPreferences, mainPreferences);
+		configManager.applyConfig(workingPreferences, mainPreferences);
 
 		committed = true;
 	}

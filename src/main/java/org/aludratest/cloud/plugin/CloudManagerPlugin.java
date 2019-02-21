@@ -32,11 +32,6 @@ package org.aludratest.cloud.plugin;
 public interface CloudManagerPlugin {
 
 	/**
-	 * Plexus role of this component.
-	 */
-	public static final String ROLE = CloudManagerPlugin.class.getName();
-
-	/**
 	 * Returns a display name of this plugin.
 	 * 
 	 * @return A human-readable display name of this plugin.

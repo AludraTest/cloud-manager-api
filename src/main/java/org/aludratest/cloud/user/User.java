@@ -19,16 +19,11 @@ package org.aludratest.cloud.user;
 /**
  * Interface for user objects. A user object is stateless and does <b>not</b> reflect a concrete, logged in user. It only reflects
  * information about a user, like an entry in a user dictionary.
- * 
+ *
  * @author falbrech
- * 
+ *
  */
 public interface User {
-
-	/**
-	 * The attribute key for the user's preferred language. A user object may or may not have this attribute set.
-	 */
-	public final static String USER_ATTRIBUTE_LANGUAGE = "language";
 
 	/**
 	 * The attribute key for the user's e-mail address. A user object may or may not have this attribute set.
@@ -37,35 +32,49 @@ public interface User {
 
 	/**
 	 * Returns the user name of the user.
-	 * 
+	 *
 	 * @return The user name of the user.
 	 */
 	public String getName();
 
 	/**
 	 * Returns the attribute keys which are defined for this user.
-	 * 
+	 *
 	 * @return A (possibly empty) array of attribute keys defined for this user, never <code>null</code>.
 	 */
 	public String[] getDefinedUserAttributes();
 
 	/**
 	 * Returns the attribute of this user for the given attribute key.
-	 * 
+	 *
 	 * @param attributeKey
 	 *            Key of the attribute to return the value for.
-	 * 
+	 *
 	 * @return The value of the given attribute for this user, or <code>null</code> if the attribute is not set for this user.
 	 */
 	public String getUserAttribute(String attributeKey);
 
 	/**
 	 * The source identifier of the user database responsible for this user object.
-	 * 
+	 *
 	 * @see UserDatabase#getSource()
-	 * 
+	 *
 	 * @return The source identifier of the user database responsible for this user object, never <code>null</code>.
 	 */
 	public String getSource();
+
+	/**
+	 * If <code>true</code>, this user is allowed to administer the AludraTest Cloud
+	 * Manager, otherwise, only requesting resources is allowed (which may be
+	 * limited as well). It is up to the implementation of the user database how to
+	 * determine if a user is an administrator. An implementation may e.g. choose to
+	 * evaluate a user attribute, or check the membership within an LDAP group. To
+	 * modify this flag for a given user, call
+	 * {@link UserDatabase#setAdminFlag(User, boolean)}.
+	 *
+	 * @return <code>true</code> if this user is allowed to administer the
+	 *         AludraTest Cloud Manager, <code>false</code> otherwise.
+	 */
+	public boolean isAdmin();
 
 }

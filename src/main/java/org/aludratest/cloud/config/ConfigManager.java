@@ -16,28 +16,24 @@
 package org.aludratest.cloud.config;
 
 /**
- * Component responsible for modifying the Main Preferences of an application. Retrive this component from
- * <code>CloudManagerApp.getInstance().getConfigManager()</code> if you want to modify a part of the Main Preferences.
- * 
+ * Component responsible for modifying the Main Preferences of an application.
+ * Retrive this component from a <code>CloudManagerApp</code> instance if you
+ * want to modify a part of the Main Preferences.
+ *
  * @author falbrech
- * 
+ *
  */
 public interface ConfigManager {
 
 	/**
-	 * Plexus role of this component.
-	 */
-	public static final String ROLE = ConfigManager.class.getName();
-
-	/**
 	 * Applies the given new Configuration to a Preferences object of the main configuration tree.
-	 * 
+	 *
 	 * @param newConfig
 	 *            New configuration to apply.
 	 * @param mainConfig
 	 *            Node of the main configuration tree, which had been passed to
 	 *            {@link Configurable#setPreferences(MainPreferences)} of a Configurable object.
-	 * 
+	 *
 	 * @throws ConfigException
 	 *             If the configuration could not be applied.
 	 * @throws IllegalArgumentException

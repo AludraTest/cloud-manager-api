@@ -15,58 +15,84 @@
  */
 package org.aludratest.cloud.app;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.aludratest.cloud.config.Configurable;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
+
 /**
- * The basic configuration properties of the AludraTest Cloud Manager application. An instance of this interface can be retrieved
- * from {@link CloudManagerApp}.
- * 
+ * The basic configuration object of the AludraTest Cloud Manager application. The singleton instance of this interface can be
+ * retrieved via Dependency Injection.
+ *
  * @author falbrech
- * 
+ *
  */
-public interface CloudManagerAppConfig {
+public interface CloudManagerAppConfig extends Configurable {
 
 	/**
-	 * Returns the name of the host AludraTest Cloud Manager is running on. This can be used in generated URLs.
-	 * 
-	 * @return The name of the host AludraTest Cloud Manager is running on.
+	 * Retrieves the currently valid settings of the application. The settings can change at any time, so the returned reference
+	 * should not be stored for a longer time.
+	 *
+	 * @return The currently valid settings of the application, never <code>null</code>.
 	 */
-	public String getHostName();
+	public CloudManagerAppSettings getCurrentSettings();
+
 
 	/**
-	 * Returns <code>true</code> if an HTTP proxy shall be used for accessing the internet.
-	 * 
-	 * @return <code>true</code> if an HTTP proxy shall be used for accessing the internet, <code>false</code> otherwise.
-	 * 
-	 * @see #getProxyHost()
-	 * @see #getProxyPort()
-	 * @see #getBypassProxyRegexp()
-	 * 
+	 * Builds and returns a ProxySelector which can be used for HTTP connections which use a proxy according to the application's
+	 * settings. Changes in the settings are reflected dynamically, so for each call to <code>select()</code> of the returned
+	 * ProxySelector, the current settings are retrieved and used.
+	 *
+	 * @return A ProxySelector which can be used for HTTP connections, never <code>null</code>.
 	 */
-	public boolean isUseProxy();
+	default ProxySelector buildProxySelector() {
+		return new ProxySelector() {
+			@Override
+			public List<Proxy> select(URI uri) {
+				CloudManagerAppSettings settings = getCurrentSettings();
 
-	/**
-	 * Returns the host of the HTTP proxy to use to access the internet, if any. Configuration value should only be used if
-	 * {@link #isUseProxy()} returned <code>true</code>.
-	 * 
-	 * @return The host of the HTTP proxy to use to access the internet, or <code>null</code>.
-	 */
-	public String getProxyHost();
+				if (!settings.isUseProxy() || StringUtils.isEmpty(settings.getProxyHost())) {
+					return Collections.emptyList();
+				}
 
-	/**
-	 * Returns the TCP port of the HTTP proxy to use to access the internet. Configuration value should only be used if
-	 * {@link #isUseProxy()} returned <code>true</code>.
-	 * 
-	 * @return The TCP port of the HTTP proxy to use to access the internet.
-	 */
-	public int getProxyPort();
+				if (!StringUtils.isEmpty(settings.getBypassProxyRegexp())) {
+					try {
+						Pattern p = Pattern.compile(settings.getBypassProxyRegexp());
+						Matcher m = p.matcher(uri.getHost());
+						if (m.matches()) {
+							return Collections.emptyList();
+						}
+					}
+					catch (PatternSyntaxException e) {
+						// this should be caught by application's configure, and not occur.
+					}
+				}
 
-	/**
-	 * Returns a regular expression to match host names against. Any host name matching this regular expression should <b>not</b>
-	 * be accessed through the configured HTTP proxy, but directly. Configuration value should only be used if
-	 * {@link #isUseProxy()} returned <code>true</code>.
-	 * 
-	 * @return A regular expression for hosts to bypass the HTTP proxy for, or <code>null</code>. Treat <code>null</code> and an
-	 *         empty String as "do not bypass proxy for ANY host".
-	 */
-	public String getBypassProxyRegexp();
+				int proxyPort = settings.getProxyPort();
+				if (proxyPort <= 0 || proxyPort > 65535) {
+					proxyPort = 80;
+				}
+				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(settings.getProxyHost(), proxyPort));
+				return Collections.singletonList(proxy);
+			}
+
+			@Override
+			public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+				LogFactory.getLog(CloudManagerAppConfig.class).error("Configured HTTP proxy seems to be invalid", ioe);
+			}
+		};
+
+	}
 
 }

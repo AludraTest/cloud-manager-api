@@ -17,12 +17,15 @@ package org.aludratest.cloud.request;
 
 import java.util.Map;
 
+import org.aludratest.cloud.manager.ManagedResourceRequest;
 import org.aludratest.cloud.resource.ResourceType;
 import org.aludratest.cloud.user.User;
 
 /**
  * Interface of a request for a resource of a given type. All attributes of a request could be taken into account by management
- * classes (Resource Manager, Resource Group, Resource Module) when e.g. the priority of a request has to be determined.
+ * classes (Resource Manager, Resource Group, Resource Module) when e.g. the priority of a request has to be determined. <br>
+ * Objects of this type represent the immutable request itself, not the managed, possibly waiting request, which is represented by
+ * objects of type {@link ManagedResourceRequest}.
  * 
  * @author falbrech
  * 
